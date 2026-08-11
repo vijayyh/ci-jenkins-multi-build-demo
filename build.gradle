@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.vit'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+    }
+}
+
+tasks.register('demoTest', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.vit.demo.AppTest'
+}
+
+tasks.named('test') {
+    dependsOn tasks.named('demoTest')
+    enabled = false
+}
+
+jar {
+    archiveFileName = 'ci-jenkins-demo-1.0.0.jar'
+    manifest {
+        attributes 'Main-Class': 'com.vit.demo.App'
+    }
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('demoTest')
+}
